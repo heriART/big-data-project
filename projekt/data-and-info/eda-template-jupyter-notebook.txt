@@ -1,0 +1,487 @@
+{
+"cells": [
+{
+"cell_type": "markdown",
+"id": "abc6ce82",
+"metadata": {
+"id": "abc6ce82"
+},
+"source": [
+"# Exploratory Data Analysis (EDA)\n",
+"\n",
+"## 1. Pravidla práce\n",
+"\n",
+"- EDA není jen generování grafů, ale systematické porozumění datům.\n",
+"- Každý krok analýzy by měl mít vazbu na cíl projektu, KPI nebo analytickou otázku.\n",
+"- Nestačí ukázat výstup; je potřeba stručně interpretovat, co z něj plyne a co z něj naopak tvrdit nelze.\n",
+"- Pokud data obsahují problém, omezení nebo nekonzistenci, uveďte to explicitně.\n",
+"- AI používejte jako pomocníka pro návrh postupu, struktury a kódu, ne jako zdroj hotových závěrů.\n",
+"- Všechny závěry musí být dohledatelné a ověřitelné přímo z dat a kroků v notebooku.\n",
+"- Pokud něco nelze zjistit spolehlivě, napište to otevřeně a nepřehánějte interpretaci.\n",
+"\n",
+"> **Důležité**\n",
+"> Pošte komentáře k datům, k výstupům.\n",
+"> Celý výstup by měl sloužit jako prezentace někomu jinému."
+]
+},
+{
+"cell_type": "markdown",
+"source": [
+"## 2. Kontext analýzy\n",
+"> **Účel:**  \n",
+"> Ukotvit analýzu v semestrálním projektu a vyjasnit, proč jsou tato data a tato EDA relevantní.\n",
+"\n",
+"> **Důležité:**  \n",
+"> Tato sekce má být stručná a věcná. Nejde o obecný popis projektu, ale o vysvětlení, jak tato analýza souvisí s cílem projektu, otázkami a KPI."
+],
+"metadata": {
+"id": "cNLRbSqTf0Yf"
+},
+"id": "cNLRbSqTf0Yf"
+},
+{
+"cell_type": "markdown",
+"source": [
+"### Vyplňte\n",
+"- **Název projektu:** [doplnit]\n",
+"- **Stručný popis projektu / domény:** [doplnit]\n",
+"- **Cíl této analýzy:** [doplnit]\n",
+"- **Hlavní analytické otázky:** [doplnit]\n",
+"- **KPI nebo metriky, ke kterým se EDA vztahuje:** [doplnit]\n",
+"- **Proč jsou vybraná data pro tuto analýzu relevantní:** [doplnit]"
+],
+"metadata": {
+"id": "71w0KDkqfz5i"
+},
+"id": "71w0KDkqfz5i"
+},
+{
+"cell_type": "markdown",
+"id": "10c2764b",
+"metadata": {
+"id": "10c2764b"
+},
+"source": [
+"## 3. Načtení dat a technická příprava\n",
+"> **Účel:**  \n",
+"> Zajistit nastavení notebooku a načtení dat pro další analýzu.\n",
+"\n",
+"> **Zde udělejte například:**  \n",
+"> - import potřebných knihoven  \n",
+"> - připojení k DuckDB  \n",
+"> - načtení nebo vytvoření relevantních tabulek / pohledů  \n",
+">   - integrace dat do db\n",
+"> - základní nastavení prostředí notebooku  \n",
+"> - první kontrolu, že data jsou dostupná a načtená správně"
+]
+},
+{
+"cell_type": "code",
+"execution_count": null,
+"id": "5de0c32e",
+"metadata": {
+"id": "5de0c32e"
+},
+"outputs": [],
+"source": [
+"# --- Importy a kontrola prostředí ---\n",
+"import importlib.util\n",
+"import subprocess\n",
+"import sys\n",
+"from pathlib import Path\n",
+"\n",
+"def ensure_package(package_name: str, import_name: str | None = None) -> None:\n",
+"    \"\"\"Zkontroluje přítomnost balíčku a případně jej doinstaluje.\"\"\"\n",
+"    module_name = import_name or package_name\n",
+"    if importlib.util.find_spec(module_name) is None:\n",
+"        print(f\"Balíček '{package_name}' není nainstalovaný. Probíhá instalace...\")\n",
+"        subprocess.check_call([sys.executable, \"-m\", \"pip\", \"install\", package_name])\n",
+"    else:\n",
+"        print(f\"Balíček '{package_name}' je dostupný.\")\n",
+"\n",
+"# Upravte seznam balíčků podle potřeby projektu\n",
+"ensure_package(\"duckdb\")\n",
+"ensure_package(\"pandas\")\n",
+"ensure_package(\"matplotlib\")\n",
+"ensure_package(\"jupyter\")  # volitelné, pokud běžíte notebook lokálně\n",
+"\n",
+"import duckdb\n",
+"import pandas as pd\n",
+"import matplotlib.pyplot as plt\n",
+"\n",
+"# Volitelné nastavení zobrazení\n",
+"pd.set_option(\"display.max_columns\", 200)\n",
+"pd.set_option(\"display.width\", 140)\n",
+"\n",
+"# --- Připojení k DuckDB ---\n",
+"DB_PATH = \"projekt.duckdb\"  # upravte podle svého projektu\n",
+"con = duckdb.connect(DB_PATH)\n",
+"\n",
+"print(f\"Připojeno k databázi: {Path(DB_PATH).resolve()}\")\n",
+"\n",
+"# --- Příklad integrace dat do DuckDB ---\n",
+"# Nahraďte cestami a názvy tabulek podle vlastního projektu.\n",
+"# con.execute(\"CREATE OR REPLACE TABLE events AS SELECT * FROM read_csv_auto('data/events.csv')\")\n",
+"# con.execute(\"CREATE OR REPLACE TABLE users AS SELECT * FROM read_parquet('data/users.parquet')\")\n",
+"\n",
+"# --- První kontrola přítomnosti tabulek ---\n",
+"try:\n",
+"    tables_df = con.execute(\"SHOW TABLES\").df()\n",
+"    display(tables_df)\n",
+"except Exception as e:\n",
+"    print(\"Nepodařilo se vypsat tabulky. Zkontrolujte načtení dat a připojení k DB.\")\n",
+"    print(e)"
+]
+},
+{
+"cell_type": "markdown",
+"id": "5d189d26",
+"metadata": {
+"id": "5d189d26"
+},
+"source": [
+"## 4. Přehled dat a zdrojů\n",
+"> **Účel:**  \n",
+"> Ukázat, s jakými daty pracujete, které tabulky jsou pro tuto EDA relevantní a jak spolu souvisejí.\n",
+"\n",
+"> **Zde udělejte například:**  \n",
+"> - uveďte přehled použitých tabulek, souborů nebo pohledů  \n",
+"> - stručně popište, co jednotlivé relevantní tabulky obsahují  \n",
+"> - identifikujte klíče, vazby mezi tabulkami a důležitá časová pole  \n",
+"> - vysvětlete, které části dat jsou pro tuto analýzu skutečně podstatné  \n",
+"> - případně uveďte, které tabulky nebo sloupce naopak pro tuto EDA relevantní nejsou"
+]
+},
+{
+"cell_type": "code",
+"execution_count": null,
+"id": "b4ff52f9",
+"metadata": {
+"id": "b4ff52f9"
+},
+"outputs": [],
+"source": [
+"# --- Přehled tabulek a jejich schémat ---\n",
+"# Doplňte názvy relevantních tabulek\n",
+"relevant_tables = [\n",
+"    # \"events\",\n",
+"    # \"users\",\n",
+"]\n",
+"\n",
+"if not relevant_tables:\n",
+"    print(\"Doplňte seznam 'relevant_tables' podle svého projektu.\")\n",
+"else:\n",
+"    for table in relevant_tables:\n",
+"        print(f\"\\n=== TABULKA: {table} ===\")\n",
+"        try:\n",
+"            print(\"Ukázka dat:\")\n",
+"            display(con.execute(f\"SELECT * FROM {table} LIMIT 5\").df())\n",
+"            print(\"Schéma:\")\n",
+"            display(con.execute(f\"DESCRIBE {table}\").df())\n",
+"        except Exception as e:\n",
+"            print(f\"Nepodařilo se načíst tabulku {table}: {e}\")\n",
+"\n",
+"# Volitelně: sem doplňte vlastní poznámky k tabulkám, klíčům a vazbám."
+]
+},
+{
+"cell_type": "markdown",
+"id": "29e4a852",
+"metadata": {
+"id": "29e4a852"
+},
+"source": [
+"## 5. První orientace v datech\n",
+"> **Účel:**  \n",
+"> Získat základní přehled o rozsahu, struktuře a charakteru dat ještě před hlubší analýzou.\n",
+"\n",
+"> **Zde udělejte například:**  \n",
+"> - zjistěte počet řádků a sloupců  \n",
+"> - zkontrolujte datové typy  \n",
+"> - projděte základní přehled sloupců a jejich význam  \n",
+"> - určete časové rozpětí dat, pokud je relevantní  \n",
+"> - odhadněte granularitu záznamů  \n",
+"> - ověřte, zda data odpovídají tomu, co si o nich myslíte z kontextu projektu"
+]
+},
+{
+"cell_type": "code",
+"execution_count": null,
+"id": "0f21f6f9",
+"metadata": {
+"id": "0f21f6f9"
+},
+"outputs": [],
+"source": [
+"# --- Základní orientace v datech ---\n",
+"# Upravte podle svého projektu. Příklad níže pracuje s první relevantní tabulkou.\n",
+"if relevant_tables:\n",
+"    table = relevant_tables[0]\n",
+"    df_preview = con.execute(f\"SELECT * FROM {table} LIMIT 1000\").df()\n",
+"\n",
+"    print(f\"Pracovní tabulka pro rychlý náhled: {table}\")\n",
+"    print(f\"Počet načtených řádků do preview: {len(df_preview)}\")\n",
+"    print(f\"Počet sloupců: {len(df_preview.columns)}\")\n",
+"\n",
+"    display(df_preview.head())\n",
+"    display(df_preview.dtypes.rename(\"dtype\").to_frame())\n",
+"\n",
+"    # Volitelné: pro časové sloupce doplňte jejich názvy\n",
+"    time_columns = [\n",
+"        # \"event_date\",\n",
+"    ]\n",
+"\n",
+"    for col in time_columns:\n",
+"        if col in df_preview.columns:\n",
+"            print(f\"\\nČasové rozpětí pro {col}:\")\n",
+"            print(df_preview[col].min(), \"->\", df_preview[col].max())\n",
+"else:\n",
+"    print(\"Nejprve vyplňte seznam relevantních tabulek v sekci 4.\")"
+]
+},
+{
+"cell_type": "markdown",
+"id": "8898004e",
+"metadata": {
+"id": "8898004e"
+},
+"source": [
+"## 6. Kvalita dat a omezení\n",
+"> **Účel:**  \n",
+"> Posoudit, zda jsou data použitelná pro další analýzu, a pojmenovat omezení, která mohou ovlivnit interpretaci výsledků.\n",
+"\n",
+"> **Zde udělejte například:**  \n",
+"> - zkontrolujte chybějící hodnoty  \n",
+"> - ověřte duplicity  \n",
+"> - identifikujte podezřelé, nekonzistentní nebo nevalidní hodnoty  \n",
+"> - zkontrolujte problémy v joinování tabulek  \n",
+"> - ověřte časové nesrovnalosti nebo strukturální chyby  \n",
+"> - stručně popište, jak tyto problémy ovlivňují další analýzu a závěry"
+]
+},
+{
+"cell_type": "code",
+"execution_count": null,
+"id": "dcbf54eb",
+"metadata": {
+"id": "dcbf54eb"
+},
+"outputs": [],
+"source": [
+"# --- Kvalita dat a omezení ---\n",
+"# Nahraďte kontrolami relevantními pro váš projekt.\n",
+"if relevant_tables:\n",
+"    table = relevant_tables[0]\n",
+"    df = con.execute(f\"SELECT * FROM {table}\").df()\n",
+"\n",
+"    print(f\"Kontrola kvality dat pro tabulku: {table}\")\n",
+"\n",
+"    # Missing values\n",
+"    missing = df.isna().sum().rename(\"missing_count\").to_frame()\n",
+"    missing[\"missing_ratio\"] = missing[\"missing_count\"] / len(df)\n",
+"    display(missing.sort_values(\"missing_ratio\", ascending=False))\n",
+"\n",
+"    # Duplicity\n",
+"    duplicate_rows = df.duplicated().sum()\n",
+"    print(f\"Počet duplicitních řádků: {duplicate_rows}\")\n",
+"\n",
+"    # Jednoduchá kontrola podezřelých hodnot u numerických sloupců\n",
+"    numeric_cols = df.select_dtypes(include=\"number\").columns.tolist()\n",
+"    if numeric_cols:\n",
+"        display(df[numeric_cols].describe().T)\n",
+"    else:\n",
+"        print(\"Tabulka neobsahuje numerické sloupce pro základní statistickou kontrolu.\")\n",
+"\n",
+"    # Prostor pro vlastní doménové validace\n",
+"    # Např. záporné ceny, neplatné kategorie, neexistující FK, chybná data apod.\n",
+"else:\n",
+"    print(\"Nejprve vyplňte seznam relevantních tabulek v sekci 4.\")"
+]
+},
+{
+"cell_type": "markdown",
+"id": "c9214bd9",
+"metadata": {
+"id": "c9214bd9"
+},
+"source": [
+"## 7. Explore and Visualize\n",
+"> Tuto sekci berte více jako orientační, upravte si ji dle vašich potřeb."
+]
+},
+{
+"cell_type": "code",
+"execution_count": null,
+"id": "d6986d4e",
+"metadata": {
+"id": "d6986d4e"
+},
+"outputs": [],
+"source": []
+},
+{
+"cell_type": "markdown",
+"id": "40bf57c3",
+"metadata": {
+"id": "40bf57c3"
+},
+"source": [
+"### 7.1 Analýza klíčových proměnných\n",
+"> **Účel:**  \n",
+"> Prozkoumat hlavní proměnné, metriky nebo atributy, které jsou důležité pro projekt a KPI.\n",
+"\n",
+"> **Zde udělejte například:**  \n",
+"> - prozkoumejte základní charakteristiky hlavních proměnných  \n",
+"> - sledujte rozdělení, četnosti, rozsahy nebo neobvyklé hodnoty  \n",
+"> - popište, co je v datech očekávané a co naopak překvapivé"
+]
+},
+{
+"cell_type": "code",
+"execution_count": null,
+"id": "8916fadc",
+"metadata": {
+"id": "8916fadc"
+},
+"outputs": [],
+"source": [
+"# --- Analýza klíčových proměnných ---\n",
+"# Doplňte relevantní tabulku a proměnné.\n",
+"# Příklady:\n",
+"# df_metric = sql_df(\"SELECT amount, category FROM sales\")\n",
+"# display(df_metric.describe())\n",
+"# df_metric[\"amount\"].hist(bins=30)\n",
+"# plt.title(\"Rozdělení amount\")\n",
+"# plt.show()\n",
+"\n",
+"pass"
+]
+},
+{
+"cell_type": "markdown",
+"id": "9e81261e",
+"metadata": {
+"id": "9e81261e"
+},
+"source": [
+"### 7.2 Analýza segmentů a kategorií\n",
+"> **Účel:**  \n",
+"> Porovnat, jak se data liší mezi skupinami, kategoriemi nebo segmenty relevantními pro projekt.\n",
+"\n",
+"> **Zde udělejte například:**  \n",
+"> - porovnejte vybrané metriky mezi segmenty  \n",
+"> - identifikujte skupiny, které se chovají odlišně  \n",
+"> - okomentujte, které rozdíly jsou pro projekt důležité"
+]
+},
+{
+"cell_type": "code",
+"execution_count": null,
+"id": "a98cca4a",
+"metadata": {
+"id": "a98cca4a"
+},
+"outputs": [],
+"source": []
+},
+{
+"cell_type": "markdown",
+"id": "fc37a574",
+"metadata": {
+"id": "fc37a574"
+},
+"source": [
+"### 7.3 Analýza v čase\n",
+"> **Účel:**  \n",
+"> Zachytit vývoj dat v čase, pokud je časová dimenze pro projekt relevantní.\n",
+"\n",
+"> **Zde udělejte například:**  \n",
+"> - sledujte trendy, výkyvy nebo anomálie  \n",
+"> - porovnejte vývoj metrik v čase  \n",
+"> - uveďte, zda lze pozorovat sezonnost, změny nebo nestabilitu"
+]
+},
+{
+"cell_type": "code",
+"execution_count": null,
+"id": "73b5ca6c",
+"metadata": {
+"id": "73b5ca6c"
+},
+"outputs": [],
+"source": []
+},
+{
+"cell_type": "markdown",
+"id": "0e3bd0f1",
+"metadata": {
+"id": "0e3bd0f1"
+},
+"source": [
+"### 7.4 Vztahy mezi proměnnými\n",
+"> **Účel:**  \n",
+"> Prozkoumat vztahy mezi proměnnými, které mohou být důležité pro pochopení KPI nebo analytických otázek.\n",
+"\n",
+"> **Zde udělejte například:**  \n",
+"> - porovnejte vybrané proměnné mezi sebou  \n",
+"> - ověřte, zda se některé atributy pohybují společně nebo se systematicky liší  \n",
+"> - interpretujte vztahy opatrně a upozorněte na limity"
+]
+},
+{
+"cell_type": "code",
+"execution_count": null,
+"id": "5cddf7ec",
+"metadata": {
+"id": "5cddf7ec"
+},
+"outputs": [],
+"source": []
+},
+{
+"cell_type": "markdown",
+"id": "7c5825a0",
+"metadata": {
+"id": "7c5825a0"
+},
+"source": [
+"## 8. Závěry a vazba na KPI\n",
+"> **Účel:**  \n",
+"> Stručně shrnout nejdůležitější zjištění z celé EDA a navázat je na projektové otázky, KPI a další práci.\n",
+"\n",
+"> **Zde udělejte například:**  \n",
+"> - vypíchněte hlavní poznatky, které z analýzy plynou  \n",
+"> - uveďte, jak tyto poznatky souvisejí s KPI nebo cílem projektu  \n",
+"> - odlište, co je podložené zjištění a co je zatím jen hypotéza  \n",
+"> - stručně shrňte, jaké limity dat je potřeba při interpretaci zohlednit  \n",
+"> - naznačte, co by mělo následovat v další části projektu"
+]
+},
+{
+"cell_type": "code",
+"execution_count": null,
+"id": "fbe8a446",
+"metadata": {
+"id": "fbe8a446"
+},
+"outputs": [],
+"source": []
+}
+],
+"metadata": {
+"kernelspec": {
+"display_name": "Python 3",
+"language": "python",
+"name": "python3"
+},
+"language_info": {
+"name": "python",
+"version": "3.11"
+},
+"colab": {
+"provenance": []
+}
+},
+"nbformat": 4,
+"nbformat_minor": 5
+}

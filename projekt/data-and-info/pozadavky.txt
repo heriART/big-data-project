@@ -1,0 +1,54 @@
+Požadavky a struktura seminární práce
+Kontext a cíle projektu
+Budujete datový produkt pro fiktivní (nebo částečně/reálnou) firmu: jasně popište problém, uživatele a očekávanou hodnotu.
+Zvolte 3 měřitelné KPI, která budete v průběhu projektu sledovat a interpretovat.
+Cílem je doložit celý mini-lifecycle: od zdrojů dat (část reálná, část syntetická) přes přípravu a EDA až po prezentaci insightů a doporučení.
+Studenti pracují ve tří členných skupinách
+Použijte generativní AI!
+Rozsah a forma výstupů
+Průvodní dokument(ace): jednoduchá HTML stránka, struktura viz níže;
+Pište stručně, věcně, ideálně odrážky, tabulky, grafy, obrázky.
+Jupyter notebook: EDA navázaná na KPI.
+Raw data: zdrojové soubory.
+Databáze DuckDB: jeden soubor .duckdb s připravenými tabulkami, popis schémat v dokumentu.
+Prezentace (poslední dvě cvičení)
+Dle pořadí skupin
++ krátké demo;
+Odevzdaná na moodle.
+Struktura průvodního dokumentu (mírně upravený draft)
+1) Představení firmy a cílů (KPI)
+Kontext: název firmy, doména, zákazníci/uživatelé.
+Business questions: 3–5 klíčových otázek, na které mají data odpovědět.
+KPI: 3 měřitelné ukazatele – definice, vzorec, jednotka, baseline, cílová hodnota, frekvence vyhodnocení.
+Stakeholdeři a rozhodnutí: kdo podle výstupů jedná; jaká rozhodnutí KPI umožní.
+Předpoklady a omezení: dostupnost dat, granularita, latence, sezónnost, kvalita.
+2) Technické řešení (model/architektura datové platformy)
+Zdrojová data: kde a čím jsou generována.
+Integrace: batch/stream, frekvence, protokoly (API, soubory), základní transformace.
+Uložení: lokální/cloud, použité nástroje a SW řešení.
+Zpracování: nástroje a pipeline kroků (např. čištění → obohacení → agregace).
+Škálování: stručný návrh (úložiště, výpočet); co se mění při ×10 dat a při přechodu na near-real-time.
+Diagramy: i) high-level architektura, ii) datový tok od zdroje k vizualizaci.
+3) Strategie nakládání s daty (Data Strategy & Governance)
+Lifecycle: zvolený model a retenční politika; řešení jednotlivých fází.
+Role a odpovědnosti (RACI).
+Kvalita dat: dimenze, metriky a prahové hodnoty (doporučeno doplnit validační testy).
+Etika a rizika: bias, reprezentativnost, syntetická data vs. realita, omezení interpretace.
+4) Data a prezentace
+Přehled datasetů: tabulka (dataset, zdroj/syntetická, rozsah, granularita, klíče, licence).
+Syntetická data – metodika: rozdělení, korelace, sezónnost, šum; omezení, aby nevznikla „příliš hezká“ data.
+Předzpracování: čištění (chybějící hodnoty, typové konverze, deduplikace), tvorba features (časové, kategorické).
+EDA navázaná na KPI – Jupyter notebook, zde jen klíčové tabulky a grafy.
+Data story a vizualizace: alespoň 6 grafů (trendy, srovnání segmentů, distribuce/outliery, relace/korelace); volitelně mapa.
+5) Diskuze, závěry a doporučení
+Shrnutí zjištění: 3–5 klíčových poznatků navázaných na KPI a business questions.
+Limity vlastního řešení: kvalita a pokrytí dat, bias, přenositelnost, technická omezení.
+Budoucnost a AI: např.: kde dává smysl automatizace; rizika a kontrolní mechanismy.
+6) Metodika a postup
+Workflow: jak jste postupovali; jak by šlo výsledek replikovat.
+Rozdělení rolí členů týmu.
+Nástroje a prostředí: verze, konvence.
+AI použití: klíčové prompty, kontrola faktů, citace zdrojů; co bylo převzato a jak bylo ověřeno.
+Zdroje: důležité zdroje (mimo AI) – publikace, dokumentace, portály apod.
+Naposledy změněno: středa, 11. února 2026, 15.08
+
