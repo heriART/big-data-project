@@ -1,0 +1,736 @@
+<!doctype html>
+<html lang="cs">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Návrh datového produktu - EcoHome a.s.</title>
+    <style>
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        line-height: 1.6;
+        color: #333;
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #f4f7f6;
+      }
+      header {
+        background-color: #2c3e50;
+        color: #fff;
+        padding: 30px 20px;
+        text-align: center;
+        border-radius: 8px 8px 0 0;
+      }
+      header h1 {
+        margin: 0 0 10px 0;
+        font-size: 1.8em;
+      }
+      header p {
+        margin: 0;
+        font-size: 1.1em;
+        color: #1abc9c;
+      }
+      .container {
+        background-color: #fff;
+        padding: 30px;
+        border-radius: 0 0 8px 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+      h2 {
+        color: #2c3e50;
+        border-bottom: 2px solid #1abc9c;
+        padding-bottom: 5px;
+        margin-top: 35px;
+      }
+      h3 {
+        color: #34495e;
+        margin-top: 25px;
+      }
+      h4 {
+        color: #2c3e50;
+        margin-top: 15px;
+      }
+      .kpi-box {
+        background-color: #e8f8f5;
+        border-left: 4px solid #1abc9c;
+        padding: 15px;
+        margin-bottom: 20px;
+      }
+      .kpi-title {
+        font-weight: bold;
+        color: #16a085;
+        font-size: 1.1em;
+        margin-bottom: 5px;
+      }
+      ul {
+        padding-left: 20px;
+      }
+      li {
+        margin-bottom: 8px;
+      }
+      p {
+        margin-bottom: 12px;
+      }
+      .graph-container {
+        margin: 25px 0;
+        padding: 15px;
+        background: #fff;
+        border: 1px solid #ecf0f1;
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        text-align: center;
+      }
+      .graph-container img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 4px;
+        border: 1px solid #ddd;
+      }
+      .graph-container p {
+        text-align: left;
+        margin-top: 15px;
+        font-size: 0.95em;
+      }
+      .styled-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+        font-size: 0.95em;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+      }
+      .styled-table thead tr {
+        background-color: #2c3e50;
+        color: #ffffff;
+        text-align: left;
+      }
+      .styled-table th,
+      .styled-table td {
+        padding: 12px 15px;
+        border: 1px solid #ddd;
+      }
+      .styled-table tbody tr {
+        border-bottom: 1px solid #dddddd;
+      }
+      .styled-table tbody tr:nth-of-type(even) {
+        background-color: #f9f9f9;
+      }
+      .footer {
+        text-align: center;
+        margin-top: 40px;
+        font-size: 0.9em;
+        color: #7f8c8d;
+        border-top: 1px solid #ddd;
+        padding-top: 20px;
+      }
+      .zdroje li {
+        margin-bottom: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>
+        Návrh datového produktu pro optimalizaci nákupu energií a analýzu
+        spotřeby chytrých domácností (EcoHome a.s.)
+      </h1>
+      <h2 style="color: #7f8c8d; border: none; margin-top: 10px; padding: 0">
+        Petr Herian, Ondřej Herian, Vojtěch Veber
+      </h2>
+      <p>
+        Semestrální projekt z předmětu - Česká zemědělská univerzita v Praze,
+        Provozně ekonomická fakulta
+      </p>
+    </header>
+
+    <div class="container">
+      <section>
+        <h2>Úvod</h2>
+        <p>
+          Tento semestrální projekt se zabývá návrhem a implementací datového
+          produktu pro fiktivní energetickou společnost EcoHome a.s. Cílem práce
+          je předvést praktické využití technologií pro zpracování velkých dat
+          (Big Data) při řešení reálného byznysového problému – optimalizace
+          nákupu elektrické energie na spotovém trhu.
+        </p>
+        <p>
+          Projekt demonstruje celý životní cyklus dat od jejich získání
+          (kombinace veřejného API a synteticky generovaných dat z IoT senzorů),
+          přes integraci a čištění, až po finální průzkumovou analýzu (EDA) a
+          vizualizaci. Výsledkem je návrh analytického řešení a dashboardu,
+          který interním nákupčím pomáhá předvídat spotřebu domácností,
+          analyzovat dopady počasí na solární výrobu a efektivně snižovat
+          provozní náklady pomocí strategie "Peak Shaving".
+        </p>
+      </section>
+
+      <section>
+        <h2>1 Představení firmy a cílů</h2>
+        <h3>1.1 Kontext a hodnota</h3>
+        <p>
+          Zvolenou firmou je fiktivní energetická společnost EcoHome a.s., která
+          funguje jako dodavatel energií a virtuální elektrárna pro chytré
+          domácnosti (analyzujeme Prahu 20). Hlavním problémem firmy je, že
+          kolísavá výroba ze solárních panelů a večerní špičky spotřeby
+          prodražují nákup elektřiny na burze. Uživatelem datového produktu jsou
+          interní analytici a nákupčí elektřiny v EcoHome. Hodnota produktu
+          spočívá v tom, že dashboard s daty umožní optimalizovat nákup (tzv.
+          Peak Shaving) a ušetřit firmě výrazné náklady.
+        </p>
+        <p>
+          Domy tu elektřinu samy primárně spotřebovávají a EcoHome hospodaří s
+          přebytky a řeší nedostatky. Funguje to ve dvou základních fázích:
+        </p>
+        <ul>
+          <li>
+            <strong>Přes den (svítí slunce):</strong> Solární panely na střeše
+            domu vyrábějí elektřinu. Dům tuto elektřinu rovnou spotřebovává
+            (běží lednička, wi-fi atd.). Protože ale přes den slunce svítí hodně
+            a lidi jsou v práci, dům vyrobí mnohem víc, než dokáže spotřebovat.
+            Vzniká přebytek. EcoHome tento přebytek od domácnosti "vykoupí" a
+            díky tomu, že je to virtuální elektrárna, ho pošle do sítě někomu
+            jinému, komu zrovna chybí, nebo ho uloží do chytré baterie.
+          </li>
+          <li>
+            <strong>Večer (slunce zapadne):</strong> Panely přestanou vyrábět.
+            Rodina ale přijde z práce domů, začne prát, vařit a svítit. Spotřeba
+            raketově roste. Protože si dům už elektřinu nevyrábí, EcoHome ji
+            musí někde sehnat a do domu dodat.
+          </li>
+        </ul>
+        <h4>V čem je problém a co optimalizujeme?</h4>
+        <p>
+          EcoHome musí tu chybějící večerní elektřinu koupit na velké
+          energetické burze. A protože večer spotřebovávají elektřinu úplně
+          všichni a soláry nesvítí, je v tuto dobu elektřina absolutně nejdraží.
+          Náš datový produkt pomáhá EcoHome předvídat chování těchto 1000 domů.
+          Když naši analytici díky datům o počasí a historii spotřeby vědí, že
+          bude zítra zataženo a zima (panely nic nevyrobí a lidi budou topit),
+          zjistí, že večer bude obrovský nedostatek. Mohou tak tu elektřinu
+          nakoupit na burze s předstihem, dokud je levná, a ušetřit firmě
+          obrovské peníze.
+        </p>
+
+        <h3>1.2 Business otázky</h3>
+        <p>Náš datový produkt má za cíl odpovědět na tyto klíčové otázky:</p>
+        <ul>
+          <li>
+            Kdy (denní doba/měsíc) vznikají největší rozdíly mezi výrobou ze
+            solárních panelů a reálnou spotřebou domácností?
+          </li>
+          <li>
+            Jak silně ovlivňuje oblačnost a venkovní teplota nutnost dokupovat
+            elektřinu ze sítě?
+          </li>
+          <li>
+            Jaké procento chybějících či poškozených dat ze senzorů v Praze 20
+            znehodnocuje naši analytiku?
+          </li>
+        </ul>
+
+        <h3>1.3 KPI (Klíčové ukazatele výkonnosti)</h3>
+        <p>
+          Pro měření úspěšnosti a sledování vývoje jsme definovali tři měřitelná
+          KPI.
+        </p>
+
+        <div class="kpi-box">
+          <div class="kpi-title">1.3.1 Grid Dependency Ratio (GDR)</div>
+          <p>
+            <strong>Definice:</strong> Podíl spotřebované energie, která nebyla
+            pokryta vlastní solární výrobou a musela se dokoupit ze sítě.<br />
+            <strong>Vzorec:</strong> (Spotřeba ze sítě / Celková spotřeba
+            domácností) * 100.<br />
+            <strong>Jednotka a frekvence:</strong> %, vyhodnocováno denně.<br />
+            <strong>Baseline a cílová hodnota:</strong> Nyní 65 %, cílová
+            hodnota &lt;45 %.
+          </p>
+        </div>
+
+        <div class="kpi-box">
+          <div class="kpi-title">1.3.2 Peak Load Cost (PLC)</div>
+          <p>
+            <strong>Definice:</strong> Průměrná nákupní cena za MWh elektřiny v
+            nejhorší večerní špičce (18:00 - 21:00).<br />
+            <strong>Vzorec:</strong> Celkové náklady na nákup elektřiny
+            (18h-21h) / Objem nakoupené elektřiny v MWh (18h-21h).<br />
+            <strong>Jednotka a frekvence:</strong> CZK/MWh, vyhodnocováno
+            týdně.<br />
+            <strong>Baseline a cílová hodnota:</strong> Nyní 3500 CZK/MWh, cíl
+            &lt;2800 CZK/MWh.
+          </p>
+        </div>
+
+        <div class="kpi-box">
+          <div class="kpi-title">1.3.3 Data Quality Score (DQS)</div>
+          <p>
+            <strong>Definice:</strong> Podíl validních, chybami nezatížených
+            záznamů ze smart-meterů vůči všem přijatým záznamům.<br />
+            <strong>Vzorec:</strong> (Počet validních hodinových záznamů bez
+            NULL hodnot / Očekávaný počet záznamů) * 100.<br />
+            <strong>Jednotka a frekvence:</strong> %, vyhodnocováno denně.<br />
+            <strong>Baseline a cílová hodnota:</strong> Nyní 92 %, cíl &gt; 99
+            %.
+          </p>
+        </div>
+
+        <h3>1.3.4 Stakeholdeři a omezení</h3>
+        <p>
+          Výstupy budou sloužit interním nákupčím k rozhodování o tom, kdy
+          nakupovat zásoby elektřiny na spotovém trhu. Hlavním omezením našeho
+          projektu je využití syntetických dat pro spotřebu domácností, která v
+          sobě budou mít uměle vložený šum a výpadky senzorů, a budou
+          kombinována s reálnými historickými daty o počasí. Data budou
+          zpracována v denních/hodinových dávkách, nikoliv v plném real-time
+          streamu.
+        </p>
+      </section>
+
+      <section>
+        <h2>2 Technické řešení</h2>
+        <h3>2.1 Zdrojová data a integrace</h3>
+        <p>Naše datová platforma integruje dva primární zdroje dat:</p>
+        <ul>
+          <li>
+            <strong>Reálná data o počasí:</strong> Historická data o oblačnosti
+            a teplotě pro oblast Prahy 20. Data jsou stahována z veřejného
+            meteorologického API (např. Open-Meteo) v denních dávkách (batch) a
+            ukládána do formátu CSV.
+          </li>
+          <li>
+            <strong>Syntetická data (IoT Smart Meters):</strong> Údaje o
+            spotřebě domácností a solární výrobě pocházející ze senzorů z 1000
+            fiktivních domácností. Generují se do efektivního sloupcového
+            formátu Parquet. Integrace probíhá dávkově pomocí Python skriptů,
+            které data extrahují a připraví pro analytický sklad.
+          </li>
+        </ul>
+
+        <h3>2.2 Uložení a zpracování dat</h3>
+        <p>
+          Pro lokální fázi vývoje a testování (PoC) využíváme analytickou
+          in-memory databázi DuckDB. Surová data (Raw data) ve formátech CSV a
+          Parquet jsou pomocí jazyka Python (knihovna Pandas) očištěna
+          (odstranění nulových hodnot z výpadků senzorů) a následně nahrána do
+          jednoho lokálního databázového souboru .duckdb. Datová pipeline
+          probíhá v krocích: Čištění surových dat → Obohacení (join IoT dat a
+          počasí podle času) → Agregace spotřeby (výpočet takzvaného "net
+          loadu"). Vše je zpracováno formou Jupyter notebooku.
+        </p>
+
+        <h3>2.3 Škálování platformy</h3>
+        <p>
+          V případě stonásobného nárůstu objemu dat (např. rozšíření z Prahy 20
+          na celou ČR) a požadavku na near-real-time latenci by naše lokální
+          řešení pomocí DuckDB nebylo dostačující. Platforma by byla migrována
+          do cloudu s využitím distribuovaných systémů. Surová data by byla
+          ukládána do distribuovaného souborového systému HDFS (Hadoop
+          Distributed File System), který zajistí automatickou replikaci a
+          odolnost proti výpadkům uzlů. Pro streaming dat ze senzorů v reálném
+          čase bychom využili Apache Kafka a samotné výpočty agregací v paměti
+          by obsluhoval masivně paralelní Apache Spark.
+        </p>
+
+        <h3>2.4 Architektura a diagramy</h3>
+        <p>High-level architektura</p>
+        <img
+          style="max-width: 100%"
+          src="high_lvl_archuitektura.png"
+          alt="Architektura datové platformy"
+        />
+        <p>Datový tok (Data Lineage):</p>
+        <img src="datovytok.drawio.png" alt="Data Lineage diagram" />
+      </section>
+
+      <section>
+        <h2>3 Strategie nakládání s daty</h2>
+        <h3>3.1 Data Lifecycle a retenční politika</h3>
+        <p>
+          Životní cyklus dat v platformě EcoHome zahrnuje plánování sběru,
+          transformaci, analytické využití a případnou likvidaci. Sběr reálných
+          dat o počasí probíhá přes API a IoT data jsou generována synteticky.
+          Po zpracování a spojení v databázi DuckDB jsou data využívána pro
+          vizualizace. Retenční politika stanovuje, že surová data (raw data) z
+          IoT senzorů s detailní hodinovou granularitou budou uchovávána
+          maximálně po dobu 3 let pro účely trénování prediktivních modelů. Po
+          této době budou plně anonymizována a agregována na úroveň měsíců,
+          případně smazána, aby se minimalizovaly náklady na úložiště.
+        </p>
+
+        <h3>3.2 Role a odpovědnosti (RACI matice)</h3>
+        <p>
+          Pro správu dat a datové platformy (Data Governance) ve společnosti
+          EcoHome využíváme metodiku RACI k jasnému vymezení odpovědností mezi
+          jednotlivými odděleními:
+        </p>
+        <ul>
+          <li>
+            <strong>Data Owner (Ředitel nákupu energií):</strong> Je schvalující
+            a celkově odpovědný (Accountable) za byznysovou hodnotu datového
+            produktu a za to, že data z elektroměrů slouží ke správnému
+            rozhodování o nákupu elektřiny.
+          </li>
+          <li>
+            <strong>Data Steward (Manažer pro kvalitu dat):</strong> Je přímo
+            odpovědný (Responsible) za definici metrik, udržování čistoty dat,
+            kontrolu kvality dat (DQS) a za dodržování GDPR u dat z domácností.
+          </li>
+          <li>
+            <strong>Data Engineer (IT oddělení):</strong> Je odpovědný
+            (Responsible) za technický chod platformy, sběr reálných dat o
+            počasí přes API a bezpečné ukládání IoT dat do databáze DuckDB.
+          </li>
+          <li>
+            <strong>Data Analyst:</strong> Je konzultován (Consulted) při návrhu
+            struktury databáze a je odpovědný (Responsible) za tvorbu finálních
+            dashboardů a vizualizací pro nákupčí.
+          </li>
+          <li>
+            <strong>Koncový zákazník (Domácnost):</strong> Je pouze informován
+            (Informed) prostřednictvím smluvních podmínek o tom, že se jeho
+            anonymizovaná data agregovaně zpracovávají pro potřeby optimalizace
+            sítě.
+          </li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>4 Data a prezentace</h2>
+        <h3>4.1 Přehled datasetu</h3>
+        <p>
+          Pro naši analýzu využíváme dva primární datasety. Reálná data o počasí
+          a syntetická data z IoT elektroměrů. Zde je jejich přehled:
+        </p>
+
+        <table class="styled-table">
+          <thead>
+            <tr>
+              <th>Název datasetu</th>
+              <th>Zdroj a způsob získání</th>
+              <th>Formát uložení</th>
+              <th>Stručný popis obsahu</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Počasí (Weather Data)</strong></td>
+              <td>Open-Meteo API (Reálná data)</td>
+              <td>CSV</td>
+              <td>
+                Historická hodinová data o venkovní teplotě a oblačnosti
+                specificky pro oblast Prahy 20.
+              </td>
+            </tr>
+            <tr>
+              <td><strong>Smart Meters (IoT)</strong></td>
+              <td>Synteticky generováno (Python skript)</td>
+              <td>Parquet</td>
+              <td>
+                Hodinové záznamy obsahující simulovanou spotřebu a výrobu
+                solární energie pro 1000 domácností. Obsahuje uměle zanesený šum
+                pro testování kvality.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>4.2 Syntetická data – metodika</h3>
+        <p>
+          Z důvodu nedostupnosti detailních reálných dat z chytrých elektroměrů
+          byla data o spotřebě a výrobě vygenerována synteticky v jazyce Python.
+          Aby data nebyla „příliš hezká“ a reflektovala realitu, zahrnuli jsme
+          následující principy:
+        </p>
+        <ul>
+          <li>
+            <strong>Sezónnost:</strong> Byla přidána denní sezónnost (špičky
+            spotřeby ráno a večer) a roční sezónnost (vyšší spotřeba v zimních
+            měsících kvůli vytápění).
+          </li>
+          <li>
+            <strong>Korelace:</strong> Solární výroba je silně inverzně
+            korelována s hodnotou oblačnosti (cloudcover) z reálných dat o
+            počasí.
+          </li>
+          <li>
+            <strong>Šum a chyby:</strong> K simulaci výpadků sítě a senzorů bylo
+            do dat úmyslně vloženo 5 % chybějících hodnot (NaN) a u náhodných
+            domů byly vygenerovány extrémní odlehlé hodnoty (outliery)
+            simulující chybu měření.
+          </li>
+        </ul>
+
+        <h3>4.3 Předzpracování dat (Preprocessing)</h3>
+        <p>
+          Před samotnou analýzou byla data načtena do databáze DuckDB. Během
+          fáze čištění byly detekovány chybějící hodnoty (sloužící pro výpočet
+          KPI Data Quality Score), které byly pro účely výpočtu spotřeby
+          nahrazeny dopředným vyplněním (forward-fill). Z časového razítka
+          (timestamp) byly extrahovány nové kategorické atributy (features):
+          hodina, den_v_tydnu a mesic. Následně proběhla deduplikace záznamů a
+          obě tabulky byly spojeny (JOIN) pomocí klíče timestamp do finálního
+          analytického pohledu v_net_load.
+        </p>
+
+        <h3>4.4 Data story a vizualizace (EDA)</h3>
+        <p>
+          V rámci průzkumové analýzy (EDA) v prostředí Jupyter Notebook jsme
+          vytvořili datový příběh navázaný na naše byznys otázky a KPI. U všech
+          grafů byla dodržena pravidla pro snižování kognitivní zátěže
+          (odstranění zbytečných prvků, správné pojmenování os včetně jednotek a
+          střídmé využití barev).
+        </p>
+
+        <div class="graph-container">
+          <h4>
+            Vývoj Grid Dependency Ratio (GDR) v průběhu roku (Trendy v čase)
+          </h4>
+          <img src="graf_01_gdr_trend.png" alt="Vývoj GDR v čase" />
+          <p>
+            Graf na obrázku ukazuje, jak se mění závislost domácností na síti v
+            jednotlivých měsících. Jasně vidíme, že v zimních měsících závislost
+            roste nad naši baseline (65 %), zatímco v létě díky solárům klesá.
+          </p>
+        </div>
+
+        <div class="graph-container">
+          <h4>Korelace oblačnosti a solární výroby (Relace/Korelace)</h4>
+          <img
+            src="graf_02_oblacnost_solar.png"
+            alt="Korelace oblačnosti a solární výroby"
+          />
+          <p>
+            Bodový graf na obrázku dokazuje silnou negativní korelaci mezi
+            oblačností (v %) a průměrnou výrobou solárních panelů (v kWh).
+          </p>
+        </div>
+
+        <div class="graph-container">
+          <h4>Průměrný "Net Load" během dne (Srovnání segmentů)</h4>
+          <img
+            src="graf_03_kachni_krivka.png"
+            alt="Průměrný Net Load - Kachní křivka"
+          />
+          <p>
+            Sloupcový graf na obrázku průměrné čisté spotřeby podle hodin jasně
+            vizualizuje tzv. "kachní křivku". Ukazuje kritickou špičku mezi
+            18:00 a 21:00, kdy panely nevyrábí, ale spotřeba je maximální.
+          </p>
+        </div>
+
+        <div class="graph-container">
+          <h4>
+            Distribuce nákupní ceny ve špičce - Peak Load Cost (Distribuce)
+          </h4>
+          <img
+            src="graf_04_plc_distribuce.png"
+            alt="Distribuce Peak Load Cost"
+          />
+          <p>
+            Histogram na obrázku ukazuje rozložení nákladů (v CZK/MWh) během
+            večerních špiček. Většina dní se pohybuje kolem baseline 3500 CZK,
+            ale vidíme zde i extrémní pravý chvost (velmi drahé dny).
+          </p>
+        </div>
+
+        <div class="graph-container">
+          <h4>Detekce anomálií ve spotřebě domácností (Outliery)</h4>
+          <img
+            src="graf_05_outliery_spotreba.png"
+            alt="Detekce anomálií ve spotřebě"
+          />
+          <p>
+            Krabicový graf (Box-plot) na obrázku hodinové spotřeby odhaluje
+            úmyslně zanesený šum a extrémní odlehlé hodnoty, které představují
+            buď havárii, nebo chybu IoT senzoru.
+          </p>
+        </div>
+
+        <div class="graph-container">
+          <h4>
+            Vývoj kvality dat v čase - Data Quality Score (Trendy/Kvalita)
+          </h4>
+          <img src="graf_06_dqs_vyvoj.png" alt="Vývoj Data Quality Score" />
+          <p>
+            Graf na obrázku sleduje KPI DQS a ukazuje dny, kdy došlo k masivním
+            výpadkům přenosu dat ze senzorů (úmyslně vložených 5 % NaN hodnot),
+            což znehodnocuje naši analytiku.
+          </p>
+        </div>
+
+        <div class="graph-container">
+          <h4>Logaritmické zobrazení spotřeby</h4>
+          <img
+            src="graf_07_spotreba_log.png"
+            alt="Logaritmické zobrazení spotřeby"
+          />
+          <p>Doplňující logaritmické zobrazení distribuce spotřeby.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>5 Diskuze, metodika a postup</h2>
+        <h3>5.1 Shrnutí klíčových zjištění</h3>
+        <p>
+          Z naší průzkumové analýzy (EDA) vyplynulo pět hlavních poznatků, které
+          přímo odpovídají na naše byznysové otázky:
+        </p>
+        <ul>
+          <li>
+            <strong>GDR vykazuje silnou sezónnost:</strong> V letních měsících
+            klesá závislost na síti pod 60 %, zatímco v zimě se blíží k 90–95 %.
+            Solární panely tak pokrývají významnou část spotřeby pouze od dubna
+            do září.
+          </li>
+          <li>
+            <strong>Kritická večerní špička (18:00–21:00):</strong> Denní profil
+            spotřeby jednoznačně potvrzuje fenomén tzv. kachní křivky. V těchto
+            hodinách je solární výroba nulová a celá spotřeba jde draze ze sítě.
+          </li>
+          <li>
+            <strong>Korelace počasí a výroby:</strong> Pearsonův korelační
+            koeficient potvrdil silný inverzní vztah – dny s oblačností nad 80 %
+            stlačují solární výrobu téměř k nule bez ohledu na roční období.
+          </li>
+          <li>
+            <strong>Vysoká variabilita nákladů (PLC):</strong> Distribuce
+            denních nákladů ve špičce je zešikmená doprava (pravý chvost), což
+            značí, že existují riziková dny s extrémně drahou energií.
+          </li>
+          <li>
+            <strong>Kvalita dat (DQS):</strong> Senzorická data průměrně
+            dosahují kvality nad 90 %, nicméně obsahují úmyslně zanesené výpadky
+            (cca 5 %) a extrémní outliery tvořící 5–15násobek normálních hodnot,
+            které je nutné filtrovat.
+          </li>
+        </ul>
+
+        <h3>5.2 Limity vlastního řešení</h3>
+        <p>
+          Naše analýza má několik objektivních omezení. Prvním je samotná
+          kvalita a pokrytí dat – spotřeba a solární výroba jsou generovány z
+          matatických modelů a nezachycují proto reálné vzorce chování lidské
+          populace (např. dovolené či využívání klimatizace). Zároveň jsou data
+          prostorově omezena na jedinou lokalitu (Praha 20) a jednoletý časový
+          horizont, což brání sledování dlouhodobých meziročních trendů. Druhým
+          limitem je bias a přenositelnost. Námi modelované domácnosti sdílejí
+          uniformní denní profil (liší se jen měřítkem), ačkoliv reálná populace
+          je mnohem více heterogenní (rodiny vs. jednotlivci). Šum ze senzorů je
+          navíc rozložen rovnoměrně, zatímco v praxi spíše dochází k hromadným
+          výpadkům celé oblasti. Z hlediska technických omezení je databáze
+          DuckDB pro našich necelých 9 milionů řádků dostatečná, ale při
+          škálování řešení na statisíce domů by bylo nutné přejít na cloudové
+          DWH nebo distribuovaný Spark.
+        </p>
+
+        <h3>5.3 Budoucnost a využití AI</h3>
+        <p>
+          Do budoucna doporučujeme firmě EcoHome nasadit prvky pokročilé
+          automatizace a AI. Dává smysl využít modely strojového učení (např.
+          Isolation Forest) pro real-time detekci vadných IoT senzorů a
+          prediktivní modely časových řad (LSTM, Prophet) pro odhadování
+          spotřeby na další dny. Lze také zavést dynamické adaptivní prahy pro
+          KPI podle aktuální sezóny. Zásadním rizikem tohoto rozvoje je ale
+          možnost přeučení (overfitting) modelů na syntetických datech, které v
+          realitě mohou selhat. V regulovaném odvětví energetiky je navíc
+          naprosto klíčová vysvětlitelnost rozhodnutí, proto se musíme vyvarovat
+          tzv. black-box modelům a implementovat přísné kontrolní mechanismy a
+          dohled.
+        </p>
+      </section>
+
+      <section>
+        <h2>6 Metodika a postup</h2>
+        <h3>6.1 Workflow a postup</h3>
+        <ul>
+          <li>
+            <strong>Definice zadání a KPI:</strong> Určení fiktivní firmy
+            EcoHome a.s. a definice měřitelných KPI (GDR, PLC, DQS).
+          </li>
+          <li>
+            <strong>Získání dat:</strong> Automatizované stažení reálných dat o
+            počasí z Open-Meteo API a vygenerování syntetických dat spotřeby v
+            Pythonu.
+          </li>
+          <li>
+            <strong>Integrace (DuckDB):</strong> Sjednocení zdrojů v lokální
+            databázi přes klíč timestamp do finálního analytického pohledu
+            v_net_load.
+          </li>
+          <li>
+            <strong>EDA v Jupyteru:</strong> Systematická průzkumová analýza
+            zaměřená na kvalitu dat a výpočet KPI, zakončená vizualizacemi s
+            důrazem na minimalizaci kognitivní zátěže (správné osy, legendy a
+            titulky).
+          </li>
+        </ul>
+
+        <h3>6.2 Rozdělení rolí členů týmu</h3>
+        <p>Projekt byl realizován ve dvoučlenném týmu (matice RACI):</p>
+        <ul>
+          <li>
+            <strong>Autor 1 (Data Engineer & Architekt):</strong> Odpovědný za
+            získání dat (API, generátor), integraci dat do DuckDB, vývoj ETL
+            pipeline a návrh architektury platformy vč. Diagramů.
+          </li>
+          <li>
+            <strong>Autor 2 (Data Analyst & Dokumentace):</strong> Odpovědný za
+            kompletní provedení EDA, vizualizace grafů, interpretaci dopadů na
+            KPI a sepsání průvodního HTML/Word dokumentu.
+          </li>
+        </ul>
+
+        <h3>6.3 Nástroje a prostředí</h3>
+        <p>
+          K řešení byly využity výhradně open-source nástroje. Programovali jsme
+          v jazyce Python 3.12 s využitím knihoven Pandas (manipulace s daty),
+          Matplotlib a Seaborn (vizualizace). Lokální uložení a analytické
+          dotazování zajistila databáze DuckDB 1.x. Vývoj a analýza probíhaly v
+          prostředí Jupyter Notebook, přičemž finální architektonické diagramy
+          vznikly v nástroji draw.io.
+        </p>
+
+        <h3>6.4 Využití umělé inteligence</h3>
+        <p>
+          Při tvorbě projektu jsme jako vývojového partnera a konzultanta
+          lokálně nasadili generativní model Claude Code. AI nám aktivně pomohla
+          s návrhem struktury datové platformy a vytvořením kostry Jupyter
+          notebooku. Nejvýznamnější aplikací AI bylo generování Python skriptů
+          pro syntetická data. Pomocí přesně formulovaných promptů jsme do dat
+          zanesli "kachní křivku", negativní korelaci oblačnosti a úmyslný
+          datový šum pro simulaci poškozených senzorů. Všechny výstupy a grafy
+          generované pomocí AI byly členy týmu manuálně spuštěny a fakticky
+          zkontrolovány.
+        </p>
+      </section>
+
+      <section>
+        <h2>7 Zdroje</h2>
+        <ul class="zdroje">
+          <li>
+            California ISO, ERÚ a ČEPS, nedatováno.
+            <em>Odborné zdroje zaměřené na energetiku a koncept Duck Curve</em>.
+          </li>
+          <li>
+            DuckDB, Pandas a Matplotlib, nedatováno.
+            <em>Oficiální dokumentace využitých knihoven</em>.
+          </li>
+          <li>
+            Open-Meteo, nedatováno. <em>Open-Meteo Archive API</em>. [online]
+            Dostupné z:
+            <a href="https://open-meteo.com/">https://open-meteo.com/</a>.
+          </li>
+          <li>
+            PEF ČZU, nedatováno.
+            <em>Materiály a přednášky z předmětu Zpracování velkých dat</em>.
+            Praha: Česká zemědělská univerzita v Praze, Provozně ekonomická
+            fakulta.
+          </li>
+        </ul>
+      </section>
+
+      <div class="footer">
+        <p>© 2026 ČZU v Praze | Petr Herian, Ondřej Herian, Vojtěch Veber</p>
+      </div>
+    </div>
+  </body>
+</html>
