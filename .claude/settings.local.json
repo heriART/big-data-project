@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python -c \"import pptx; print\\(pptx.__version__\\)\")",
+      "Bash(py --version)",
+      "Bash(py -c \"import pptx; print\\('pptx ok:', pptx.__version__\\)\")",
+      "Bash(where python *)",
+      "Bash(where py *)",
+      "Bash(pandoc --version)",
+      "Bash(pandoc prezentace.md -o prezentace.pptx --slide-level=1)"
+    ]
+  }
+}
